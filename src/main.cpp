@@ -8,7 +8,7 @@ char const * version = "0.0.2";
 
 namespace po = boost::program_options;
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char *argv[]) {
 
     using std::string;
     using po::value;
@@ -29,14 +29,14 @@ int main(int argc, char const *argv[]) {
 
     po::options_description filter_options("tests");
     filter_options.add_options()
-        ("type,t", value<string>()->value_name("t"), "File is of type t")
-        ("permissions,p", value<string>()->value_name("mode"), "File's permission bits are exactly mode")
-        ("uid,u", value<int>()->value_name("n"), "File's numeric user ID is n")
-        ("gid,g", value<int>()->value_name("n"), "File's numeric group ID is n")
-        ("owner,o", value<string>()->value_name("o"), "File is owned by o")
-        ("group,G", value<string>()->value_name("g"), "File belongs to group g")
-        ("newer,n", value<string>()->value_name("yymmddHHMMSS"), "File modified after time point")
-        ("older,O", value<string>()->value_name("yymmddHHMMSS"), "File modified before time point")
+        ("type,t", value<string>(), "File is of type t")
+        ("permissions,p", value<string>(), "File's permission bits are exactly mode")
+        ("uid,u", value<int>(), "File's numeric user ID is n")
+        ("gid,g", value<int>(), "File's numeric group ID is n")
+        ("owner,o", value<string>(), "File is owned by o")
+        ("group,G", value<string>(), "File belongs to group g")
+        ("newer,n", value<string>(), "File modified after time point")
+        ("older,O", value<string>(), "File modified before time point")
 
     ;
 
@@ -49,7 +49,7 @@ int main(int argc, char const *argv[]) {
 
 
     try {
-        po::store(po::parse_command_line(argc, argv, desc), pasred_options);
+        po::store(po::command_line_parser(argc, argv).options(desc).run(), pasred_options);
         po::notify(pasred_options);
     }
     catch (std::exception& e) {
