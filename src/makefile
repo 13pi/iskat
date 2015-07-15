@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-c -std=c++0x -Wall -Werror
-LDFLAGS=
+LDFLAGS=-lboost_program_options
 
 EXEC=iskat
 SOURCES=main.cpp
@@ -20,10 +20,10 @@ RELCFLAGS = -O3 -DNDEBUG
 default: prep release
 
 release: $(RELOBJS)
-	$(CC) $(LDFLAGS) -o $(EXEC) $(RELOBJS)
+	$(CC) $(RELOBJS) $(LDFLAGS) -o $(EXEC) 
 
 debug: $(DBGOBJS)
-	$(CC) $(LDFLAGS) -o $(EXEC) $(DBGOBJS)
+	$(CC) $(DBGOBJS) $(LDFLAGS) -o $(EXEC) 
 
 $(DBGDIR)/%.o: %.cpp
 	$(CC) $(CFLAGS) $(DBGCFLAGS) -o $@ $<
