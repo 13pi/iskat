@@ -1,6 +1,6 @@
 #include <sys/stat.h>
 #include <string>
-#include <iostream>
+#include <ostream>
 
 typedef unsigned short perm_t;
 
@@ -18,9 +18,7 @@ enum FileType {
 std::ostream& operator<<(std::ostream&, FileType const &);
 
 struct File {
-    File(std::string const &);
-
-  
+    File(std::string const &);  
 
     ino_t   inode() const {return _stat.st_ino; }
     mode_t  mode() const { return _stat.st_mode; }

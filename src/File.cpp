@@ -28,6 +28,10 @@ perm_t File::permissions() const {
     return mode() & permissions_mask;
 }
 
+std::string File::name() const {
+    return filename;
+}
+
 std::ostream& operator<<(std::ostream& o , FileType const & t) {
     switch (t) {
         case SOCKET: return o << "SOCKET";

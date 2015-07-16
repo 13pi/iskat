@@ -8,5 +8,6 @@ void file_test() {
 	std::cout << f.uid() << std::endl;
 	std::cout << f.size() << std::endl;
 	std::cout << f.type() << std::endl;
+	std::cout << f.name() << std::endl;
 	std::cout << std::oct << f.permissions() << std::endl;
 }
