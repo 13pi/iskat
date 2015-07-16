@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-c -std=c++0x -Wall -Werror
-LDFLAGS=-lboost_program_options
+LDFLAGS=-lboost_program_options -lboost_filesystem-mt
 
 EXEC=iskat
 SOURCES=main.cpp
