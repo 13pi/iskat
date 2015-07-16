@@ -1,21 +1,29 @@
 CC=g++
 CFLAGS=-c -std=c++0x -Wall -Werror
-LDFLAGS=-lboost_program_options -lboost_filesystem-mt
+LDFLAGS=-lboost_program_options -lboost_filesystem -lboost_system
 
 EXEC=iskat
-SOURCES=main.cpp
+SOURCES=main.cpp File.cpp
 HEADERS=
 OBJECTS=$(SOURCES:.cpp=.o)
 
-DBGDIR = build/debug
-DBGOBJS = $(addprefix $(DBGDIR)/, $(OBJECTS))
-DBGCFLAGS = -g3 -O0 -DDEBUG
+DBGDIR=build/debug
+DBGOBJS=$(addprefix $(DBGDIR)/, $(OBJECTS))
+DBGCFLAGS=-g3 -O0 -DDEBUG
 
-RELDIR = build/release
-RELOBJS = $(addprefix $(RELDIR)/, $(OBJECTS))
-RELCFLAGS = -O3 -DNDEBUG
+RELDIR=build/release
+RELOBJS=$(addprefix $(RELDIR)/, $(OBJECTS))
+RELCFLAGS=-O3 -DNDEBUG
 
-.PHONY: all clean debug prep release rebuild install tgz uninstall
+TESTSRC=$(wildcard test/*.cc)
+TESTOBJ=$(TESTSRC:.cc=.o)
+TESTCFLAG=-O0 -Wall -Werror
+TESTLDFLAG=
+TESTEXEC=test/test
+RELMAINOBJ=$(addprefix $(RELDIR)/,main.o)
+TESTRELOBJECTS=$(filter-out $(RELMAINOBJ),$(RELOBJS))
+
+.PHONY: all clean debug prep release rebuild install tgz uninstall test
 
 default: prep release
 
@@ -47,3 +55,12 @@ tgz:
 
 prep:
 	@mkdir -p $(DBGDIR) $(RELDIR)
+
+test/%.o: %.cc
+	$(CC) $(CFLAGS) $(TESTCFLAG) -o $@ $<
+
+$(TESTEXEC): $(TESTRELOBJECTS) $(TESTOBJ)
+	$(CC) $(TESTOBJ) $(TESTRELOBJECTS) $(TESTLDFLAG) -o $(TESTEXEC)
+
+test: $(TESTEXEC)
+	@test/test
