@@ -4,10 +4,88 @@
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/regex.hpp>
+
+#include <stdio.h>
+#include <time.h>
+#include <sys/stat.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include <iomanip>
 
 char const * VERSION = "0.0.2";
 
 namespace po = boost::program_options;
+
+//TODO: USE ????
+// struct File {
+//     File(const std::string&);
+//     std::string filename;
+//     struct stat buf;
+// };
+
+    void walk( const boost::filesystem::path & dir_path,         // in this directory,
+               int maxdep, po::variables_map pasred_options ){
+      if ( !(exists( dir_path )&&maxdep) ) return;
+      boost::filesystem::directory_iterator end_itr; // default construction yields past-the-end
+      for ( boost::filesystem::directory_iterator itr( dir_path );
+            itr != end_itr;
+            ++itr ){
+        if ( is_directory(itr->status()) ){
+          //std::cout<<itr->path().leaf();
+          walk( itr->path(), maxdep-1, pasred_options);
+        }else{ 
+
+        char *date;
+        int ret;
+        struct stat buf;
+
+        // itr->path().string().c_str() - absolute path
+        if ((ret = stat(itr->path().string().c_str(), &buf))!=0){
+            std::cout << "error" << itr->path() << "\r\n";
+            fprintf(stderr, "stat failure error .%d", ret);
+            // abort();
+            continue;
+          }
+
+          bool matchesFilter = true;
+
+// start filters 
+          if (pasred_options.count("name") && matchesFilter) {
+
+            boost::regex pattern ( pasred_options["name"].as<std::string>()  );
+            //std::cout << "pattern is |" << pattern << "|";
+            if ( regex_match (itr->path().leaf(), pattern)  ){
+            //std::cout << "mathes name is |" << itr->path().leaf() << "|";
+             } else{
+             //std::cout << " not mathes name is |" << itr->path().leaf() << "|";
+             matchesFilter = false;
+             }
+
+            }
+// end filters 
+        // if we passed all expressions that user say
+        // to find - print them
+        // else - work on next file
+       if ( !matchesFilter ) continue;
+
+        date = asctime(localtime(&buf.st_ctime));
+
+     // this is file name
+     std::cout << std::setw(40) << std::left <<  itr->path().leaf();
+     std::cout << std::setw(20) << std::left << buf.st_size  ;
+     //std::cout << std::setw(10) << std::left << date  ;
+     std::cout << std::setw(20) << std::left << buf.st_mode  ;
+     std::cout << std::setw(20) << std::left << buf.st_uid  ;
+     std::cout << std::setw(20) << std::left << buf.st_gid << "\n" ;
+
+        }
+      }
+      return;
+    }
+
+
 
 int main(int argc, char *argv[]) {
 
@@ -16,7 +94,7 @@ int main(int argc, char *argv[]) {
 
     po::variables_map pasred_options;
     bool follow_syml = false;
-    int max_depth;
+    int max_depth = 7;
 
 
     po::options_description desc("General options");
@@ -38,6 +116,7 @@ int main(int argc, char *argv[]) {
         ("group,G", value<string>(), "File belongs to group g")
         ("newer,n", value<string>(), "File modified after time point")
         ("older,O", value<string>(), "File modified before time point")
+        ("name", value<string>(), "File name")
 
     ;
 
@@ -77,6 +156,17 @@ int main(int argc, char *argv[]) {
     }
 
     std::cout << max_depth << follow_syml << std::endl;
+
+    std::cout <<"Name" << std::setw(40) 
+    <<"Size"<< std::setw(20) 
+   //  <<"Date " << std::setw(20) 
+    <<"Mode "<< std::setw(20) 
+    <<"st_uid " << std::setw(20) 
+    <<"st_gid \n"  ;
+    std::cout << std::setfill(' ') << std::setw(140) << " " << std::endl;
+ 
+    boost::filesystem::path cur_dir(".");
+    walk(cur_dir, max_depth, pasred_options);
 
     return 0;
 }
