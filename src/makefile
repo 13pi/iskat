@@ -15,7 +15,7 @@ RELDIR = build/release
 RELOBJS = $(addprefix $(RELDIR)/, $(OBJECTS))
 RELCFLAGS = -O3 -DNDEBUG
 
-.PHONY: all clean debug prep release rebuild install tgz
+.PHONY: all clean debug prep release rebuild install tgz uninstall
 
 default: prep release
 
@@ -38,6 +38,9 @@ clean:
 
 install: $(EXEC)
 	cp $(EXEC) /usr/bin/
+
+uninstall:
+	rm -f /usr/bin/$(EXEC)
 
 tgz:
 	tar -cvzf ../bin/iskat.tgz $(SOURCES) $(HEADERS) makefile
