@@ -36,7 +36,7 @@ struct NameFilter : BaseFilter {
 };
 
 typedef boost::ptr_list<BaseFilter> FilterList;
-typedef typename FilterList::iterator filter_it;
+typedef FilterList::iterator filter_it;
 
 FilterList make_filters(boost::program_options::variables_map &);
 inline BaseFilter* new_clone( BaseFilter const & o) { return o.clone(); }
