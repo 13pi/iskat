@@ -1,5 +1,7 @@
 #include "Filter.h"
 
+#include <boost/regex.hpp>
+
 using std::string;
 typedef string const & str_cref;
 
@@ -9,10 +11,12 @@ FilterList make_filters(boost::program_options::variables_map & po) {
     if (po.count("type")) {
         ret.push_back(new TypeFilter(po["type"].as<string>()));
     }
+    if (po.count("name")) {
+        ret.push_back(new NameFilter(po["type"].as<string>()));
+    }
     if (ret.size() == 0) {
         ret.push_back(new TrueFilter);
     }
-
     return ret;
 }
 
@@ -27,4 +31,10 @@ TypeFilter::TypeFilter(str_cref s) {
         case 's' : type = SOCKET; return;
         default: type = NOT_A_FILE; return;
     }
+}
+
+
+bool NameFilter::operator()(File const &f) {
+    boost::regex pattern(name);
+    return regex_match(f.name(), pattern);
 }

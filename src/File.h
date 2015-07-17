@@ -1,3 +1,6 @@
+#ifndef _FILE_H
+#define _FILE_H
+
 #include <sys/stat.h>
 #include <string>
 #include <ostream>
@@ -37,3 +40,5 @@ private:
     struct stat _stat;
     std::string filename;  
 };
+
+#endif // _FILE_H

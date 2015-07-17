@@ -27,9 +27,18 @@ struct TypeFilter : BaseFilter {
 	FileType type;
 };
 
+struct NameFilter : BaseFilter {
+	NameFilter( std::string const & n ) : name(n) {}
+	virtual bool operator()(File const &f);
+	NameFilter* clone() const { return new NameFilter(*this); }
+
+	std::string name;
+};
+
 typedef boost::ptr_list<BaseFilter> FilterList;
+typedef typename FilterList::iterator filter_it;
 
 FilterList make_filters(boost::program_options::variables_map &);
-BaseFilter* new_clone( BaseFilter const & o) { return o.clone(); }
+inline BaseFilter* new_clone( BaseFilter const & o) { return o.clone(); }
 
 #endif // _FILTER_H
