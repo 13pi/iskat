@@ -32,7 +32,7 @@ void walk(std::string const & start_dir, po::variables_map & po) {
     Walker w(start_dir, max_depth, follow_syml);
     FilterList filters = make_filters(po);
 
-    File current(start_dir);
+    File current(start_dir, false);
 
     while(w.get_next(current)){
 
@@ -117,12 +117,8 @@ int main(int argc, char *argv[]) {
         std::cout << VERSION << std::endl;
         return 0;
     }
+    
+    walk(pasred_options["start"].as<string>(), pasred_options);
 
-    try {
-        walk(pasred_options["start"].as<string>(), pasred_options);
-    } 
-    catch (std::exception & e) {
-        std::cout << e.what() << std::endl;
-    }
     return 0;
 }

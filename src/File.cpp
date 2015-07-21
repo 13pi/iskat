@@ -3,9 +3,21 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-File::File(std::string const &s) : filename(s) {
-    if(stat(s.c_str(), &_stat) < 0) {
-        throw;
+#include <cerrno>
+#include <cstring>
+
+#include <sstream>
+
+File::File(std::string const &s, bool f) : filename(s) {
+    if(f) {
+        if(stat(s.c_str(), &_stat) < 0) {
+            throw FileException(errno, s);
+        }
+    }
+    else {
+        if(lstat(s.c_str(), &_stat) < 0) {
+            throw FileException(errno, s);
+        }
     }
 }
 
@@ -32,6 +44,10 @@ std::string File::name() const {
     return filename;
 }
 
+std::string File::path() const {
+    return filepath;
+}
+
 std::ostream& operator<<(std::ostream& o , FileType const & t) {
     switch (t) {
         case SOCKET: return o << "SOCKET";
@@ -43,4 +59,19 @@ std::ostream& operator<<(std::ostream& o , FileType const & t) {
         case FIFO: return o << "FIFO";
         default: return o << "NOT_A_FILE";
     }
+}   
+
+FileException::FileException(int errcode, std::string const & name) {
+    filename = name;
+    code = errcode;
 }
+
+const char* FileException::what() const throw() {
+    std::ostringstream str;
+   
+
+    str << filename << ": " << strerror(code);
+
+
+    return str.str().c_str();
+} 
