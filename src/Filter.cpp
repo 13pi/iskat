@@ -1,15 +1,22 @@
 #include "Filter.h"
 
 #include <boost/regex.hpp>
-
+#include <sys/types.h>
+#include <pwd.h>
+#include <grp.h>
 #include <fnmatch.h>
 #include <iostream>
 #include <string>
+#include <vector>
+#include <stdexcept>
+#include <sstream>
+#include <cstring>
+#include <cerrno>
+
 using std::string;
 using std::cout;
 using std::endl;
 
-#include <vector>
 
 typedef string const & str_cref;
 
@@ -25,9 +32,28 @@ FilterList make_filters(boost::program_options::variables_map & po, size_list_t 
     if (po.count("size")) {
         make_size_filters(sl, ret);
     }
+    if (po.count("uid")) {
+        ret.push_back(new UidFilter(po["uid"].as<int>()));
+    }
+    if (po.count("gid")) {
+        ret.push_back(new GidFilter(po["gid"].as<int>()));
+    }
+    if (po.count("group")) {
+        ret.push_back(new GidFilter(po["group"].as<string>()));
+    }
+    if (po.count("owner")) {
+        ret.push_back(new UidFilter(po["owner"].as<string>()));
+    }
+    if (po.count("older")) {
+        ret.push_back(new TimeFilter(po["older"].as<string>(), true));
+    }
+    if (po.count("newer")) {
+        ret.push_back(new TimeFilter(po["newer"].as<string>(), false));
+    }
     if (ret.size() == 0) {
         ret.push_back(new TrueFilter);
     }
+
     return ret;
 }
 
@@ -78,6 +104,11 @@ void make_size_filters(size_list_t & size_list, FilterList & ret) {
 
             ret.push_back(new SizeFilter(ivalue, gt));
         }
+        else {
+            std::ostringstream s;
+            s << "Invalid argument for --size: " << text;
+            throw std::invalid_argument(s.str());
+        }
     }
 }
 
@@ -86,3 +117,25 @@ bool SizeFilter::operator()(File const &f) {
     return f.size() <= size;
 }
 
+UidFilter::UidFilter( std::string const & name) {
+    struct passwd * user = getpwnam(name.c_str());
+    if (user == NULL) {
+        throw std::invalid_argument("No user named " + name);
+    }
+    uid = user->pw_uid;
+}
+
+GidFilter::GidFilter( std::string const & name)  {
+    struct group * group = getgrnam(name.c_str());
+    if (group == NULL) {
+        throw std::invalid_argument("No group named " + name);
+    }
+    gid = group->gr_gid;
+}
+
+TimeFilter::TimeFilter ( std::string const & date, bool o) : older(o) {
+    timepoint = parse_date(date);
+}
+bool TimeFilter::operator()(File const & f ) {
+    return older ? f.ctime() < timepoint : f.ctime() > timepoint;
+}

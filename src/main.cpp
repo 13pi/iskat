@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
         ("permissions,p", value<string>(), "File's permission bits are exactly mode")
         ("uid,u", value<int>(), "File's numeric user ID is n")
         ("gid,g", value<int>(), "File's numeric group ID is n")
-        ("owner,u", value<string>(), "File is owned by o")
+        ("owner,U", value<string>(), "File is owned by o")
         ("group,G", value<string>(), "File belongs to group g")
         ("newer,N", value<string>(), "File modified after time point")
         ("older,O", value<string>(), "File modified before time point")
@@ -119,7 +119,10 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     
-    walk(pasred_options["start"].as<string>(), pasred_options, size_list);
+    try { walk(pasred_options["start"].as<string>(), pasred_options, size_list); }
+    catch(std::exception & e ) {
+        std::cout << e.what() << std::endl;
+    }
 
     return 0;
 }
