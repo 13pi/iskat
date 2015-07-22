@@ -3,10 +3,35 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-File::File(std::string const &s) : filename(s) {
-    if(stat(s.c_str(), &_stat) < 0) {
-        throw;
+#include <cerrno>
+#include <cstring>
+
+#include <sstream>
+
+#include <algorithm>
+#include <string>
+
+struct MatchPathSeparator {
+    bool operator()( char ch ) const {
+        return ch == '/';
     }
+};
+
+File::File(std::string const &s, bool f) : filepath(s) {
+    if(!f || eaccess(s.c_str(), F_OK)) {
+        if(lstat(s.c_str(), &_stat) < 0) {
+            throw FileException(errno, s);
+        }
+    }
+    else {
+        if(stat(s.c_str(), &_stat) < 0) {
+            throw FileException(errno, s);
+        }
+    }
+
+    filename = std::string( std::find_if( filepath.rbegin(), filepath.rend(),
+                      MatchPathSeparator() ).base(),
+        filepath.end() );
 }
 
 FileType File::type() const  {
@@ -32,6 +57,10 @@ std::string File::name() const {
     return filename;
 }
 
+std::string File::path() const {
+    return filepath;
+}
+
 std::ostream& operator<<(std::ostream& o , FileType const & t) {
     switch (t) {
         case SOCKET: return o << "SOCKET";
@@ -43,4 +72,21 @@ std::ostream& operator<<(std::ostream& o , FileType const & t) {
         case FIFO: return o << "FIFO";
         default: return o << "NOT_A_FILE";
     }
+}   
+
+FileException::FileException(int errcode, std::string const & name) {
+    filename = name;
+    code = errcode;
 }
+
+FileException::~FileException() throw() {}
+
+const char* FileException::what() const throw() {
+    std::ostringstream str;
+   
+
+    str << filename << ": " << strerror(code);
+
+
+    return str.str().c_str();
+} 

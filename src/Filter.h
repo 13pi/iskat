@@ -5,6 +5,9 @@
 #include <boost/program_options/variables_map.hpp>
 #include <boost/utility.hpp>
 #include <string>
+#include <vector>
+
+typedef std::vector<std::string> size_list_t;
 
 #include "File.h"
 
@@ -28,17 +31,27 @@ struct TypeFilter : BaseFilter {
 };
 
 struct NameFilter : BaseFilter {
-	NameFilter( std::string const & n ) : name(n) {}
+	NameFilter( std::string const & n ) : pattern(n) {}
 	virtual bool operator()(File const &f);
 	NameFilter* clone() const { return new NameFilter(*this); }
 
-	std::string name;
+	std::string pattern;
+};
+
+struct SizeFilter : BaseFilter {
+	SizeFilter ( off_t sz, bool greater_than ) : size(sz), gt(greater_than) {} 
+	virtual bool operator()(File const &f);
+	SizeFilter* clone() const { return new SizeFilter(*this); }
+
+	off_t size;
+	bool gt;
 };
 
 typedef boost::ptr_list<BaseFilter> FilterList;
 typedef FilterList::iterator filter_it;
 
-FilterList make_filters(boost::program_options::variables_map &);
+void make_size_filters(size_list_t &, FilterList &);
+FilterList make_filters(boost::program_options::variables_map &, size_list_t &);
 inline BaseFilter* new_clone( BaseFilter const & o) { return o.clone(); }
 
 #endif // _FILTER_H

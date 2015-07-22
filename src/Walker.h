@@ -1,23 +1,38 @@
 #ifndef _WALKER_H
 #define _WALKER_H
 
+#include <stack>
 #include "File.h"
-#include <boost/filesystem.hpp>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
 
-namespace fs = boost::filesystem;
+#include "iskat.h"
 
 struct Walker {
 
 	Walker(std::string const & start, int max_depth, bool fl);
-	bool get_next(std::string & path);
-	void skip_deep();
-
+	bool get_next(File&);
+	
 private:
-	fs::recursive_directory_iterator cur;
-	fs::recursive_directory_iterator end;
-
 	bool follow_syml;
-	int max_depth;
+	int maxlevel;
+
+	DIR *d;
+	struct dirent *dent;
+	std::string current;
+	std::string parent;
+	int level;
+	struct stat st;
+
+	std::stack<std::string> parent_st;
+	std::stack<DIR*> dir_st;
+	std::stack<struct dirent*> dent_st;
+
+	void pop();
+	void push();
+	bool should_be_visited();
+
 };
 
 #endif // _WALKER_H
