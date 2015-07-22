@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
     po::options_description action_options("actions");
     action_options.add_options()
         ("print,P", "Print the full file name")
-        ("exec,E", "execute command")
+        ("exec,E", value<string>(), "execute command")
     ;
 
     desc.add(filter_options).add(action_options);

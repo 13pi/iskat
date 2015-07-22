@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-c -std=c++0x -Wall -Werror 
+CFLAGS=-c -std=c++0x -Wall -Werror -Wno-unused-result
 LDFLAGS=-lboost_program_options -lboost_filesystem -lboost_system -lboost_regex
 
 EXEC=iskat
@@ -33,10 +33,10 @@ release: $(RELOBJS)
 debug: $(DBGOBJS)
 	$(CC) $(DBGOBJS) $(LDFLAGS) -o $(EXEC) 
 
-$(DBGDIR)/%.o: %.cpp
+$(DBGDIR)/%.o: %.cpp $(HEADERS)
 	$(CC) $(CFLAGS) $(DBGCFLAGS) -o $@ $<
 
-$(RELDIR)/%.o: %.cpp
+$(RELDIR)/%.o: %.cpp $(HEADERS)
 	$(CC) $(CFLAGS) $(RELCFLAGS) -o $@ $<
 
 rebuild: clean default

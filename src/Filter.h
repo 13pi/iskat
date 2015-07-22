@@ -17,6 +17,7 @@ typedef std::vector<std::string> size_list_t;
 #include "File.h"
 
 struct BaseFilter {
+	virtual ~BaseFilter() {};
 	virtual bool operator()(File const &) = 0;
 	virtual BaseFilter * clone() const {return (BaseFilter*)NULL;}
 };
