@@ -66,6 +66,8 @@ FileException::FileException(int errcode, std::string const & name) {
     code = errcode;
 }
 
+FileException::~FileException() throw() {}
+
 const char* FileException::what() const throw() {
     std::ostringstream str;
    

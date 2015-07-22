@@ -27,6 +27,7 @@ struct FileException : std::exception {
     int code;
     std::string filename;
     FileException(int, std::string const &);
+    ~FileException() throw();
     virtual const char * what() const throw();
 };
 

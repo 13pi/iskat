@@ -4,7 +4,7 @@ LDFLAGS=-lboost_program_options -lboost_filesystem -lboost_system -lboost_regex
 
 EXEC=iskat
 SOURCES=main.cpp File.cpp Filter.cpp Walker.cpp
-HEADERS=File.h Filter.h Walker.h
+HEADERS=File.h Filter.h Walker.h iskat.h
 OBJECTS=$(SOURCES:.cpp=.o)
 
 DBGDIR=build/debug
