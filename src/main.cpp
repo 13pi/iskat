@@ -119,7 +119,10 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     
-    walk(pasred_options["start"].as<string>(), pasred_options, size_list);
+    try { walk(pasred_options["start"].as<string>(), pasred_options, size_list); }
+    catch(std::exception & e ) {
+        std::cout << e.what() << std::endl;
+    }
 
     return 0;
 }

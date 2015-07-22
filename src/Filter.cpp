@@ -5,11 +5,14 @@
 #include <fnmatch.h>
 #include <iostream>
 #include <string>
+#include <vector>
+#include <stdexcept>
+#include <sstream>
+
 using std::string;
 using std::cout;
 using std::endl;
 
-#include <vector>
 
 typedef string const & str_cref;
 
@@ -77,6 +80,11 @@ void make_size_filters(size_list_t & size_list, FilterList & ret) {
             }
 
             ret.push_back(new SizeFilter(ivalue, gt));
+        }
+        else {
+            std::ostringstream s;
+            s << "Invalid argument for --size: " << text;
+            throw std::invalid_argument(s.str());
         }
     }
 }
