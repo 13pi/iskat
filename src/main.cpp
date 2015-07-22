@@ -16,7 +16,7 @@ namespace po = boost::program_options;
 using std::string;
 
 char const * PROGRAM_NAME = "iskat";
-char const * VERSION = "0.2.0";
+char const * VERSION = "0.4.0";
 
 void walk(std::string const & start_dir, po::variables_map & po, std::vector<string> & size_list) {
     int max_depth = -1;
