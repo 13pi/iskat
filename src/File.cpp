@@ -8,7 +8,16 @@
 
 #include <sstream>
 
-File::File(std::string const &s, bool f) : filename(s) {
+#include <algorithm>
+#include <string>
+
+struct MatchPathSeparator {
+    bool operator()( char ch ) const {
+        return ch == '/';
+    }
+};
+
+File::File(std::string const &s, bool f) : filepath(s) {
     if(!f || eaccess(s.c_str(), F_OK)) {
         if(lstat(s.c_str(), &_stat) < 0) {
             throw FileException(errno, s);
@@ -19,6 +28,10 @@ File::File(std::string const &s, bool f) : filename(s) {
             throw FileException(errno, s);
         }
     }
+
+    filename = std::string( std::find_if( filepath.rbegin(), filepath.rend(),
+                      MatchPathSeparator() ).base(),
+        filepath.end() );
 }
 
 FileType File::type() const  {

@@ -12,13 +12,13 @@
 
 #include "iskat.h"
 
-char const * PROGRAM_NAME = "iskat";
-
 namespace po = boost::program_options;
+using std::string;
 
+char const * PROGRAM_NAME = "iskat";
 char const * VERSION = "0.2.0";
 
-void walk(std::string const & start_dir, po::variables_map & po) {
+void walk(std::string const & start_dir, po::variables_map & po, std::vector<string> & size_list) {
     int max_depth = -1;
     bool follow_syml = false;
 
@@ -30,7 +30,7 @@ void walk(std::string const & start_dir, po::variables_map & po) {
     }
 
     Walker w(start_dir, max_depth, follow_syml);
-    FilterList filters = make_filters(po);
+    FilterList filters = make_filters(po, size_list);
 
     File current(start_dir, false);
 
@@ -46,7 +46,7 @@ void walk(std::string const & start_dir, po::variables_map & po) {
         }
 
         if (pass_filters) {
-            std::cout << current.name() << std::endl;
+            std::cout << current.path() << std::endl;
         }
     }
 
@@ -54,10 +54,11 @@ void walk(std::string const & start_dir, po::variables_map & po) {
 
 int main(int argc, char *argv[]) {
 
-    using std::string;
+
     using po::value;
 
     po::variables_map pasred_options;
+    std::vector<string> size_list;
 
     po::options_description desc("General options");
     desc.add_options()
@@ -80,7 +81,7 @@ int main(int argc, char *argv[]) {
         ("newer,N", value<string>(), "File modified after time point")
         ("older,O", value<string>(), "File modified before time point")
         ("name,n", value<string>(), "File name")
-        ("size,s", value<std::vector<string>>()->composing(), "File size")
+        ("size,s", value<std::vector<string>>(&size_list)->composing(), "File size")
 
     ;
 
@@ -118,7 +119,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     
-    walk(pasred_options["start"].as<string>(), pasred_options);
+    walk(pasred_options["start"].as<string>(), pasred_options, size_list);
 
     return 0;
 }
