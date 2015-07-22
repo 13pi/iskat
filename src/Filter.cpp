@@ -44,6 +44,12 @@ FilterList make_filters(boost::program_options::variables_map & po, size_list_t 
     if (po.count("owner")) {
         ret.push_back(new UidFilter(po["owner"].as<string>()));
     }
+    if (po.count("older")) {
+        ret.push_back(new TimeFilter(po["older"].as<string>(), true));
+    }
+    if (po.count("newer")) {
+        ret.push_back(new TimeFilter(po["newer"].as<string>(), false));
+    }
     if (ret.size() == 0) {
         ret.push_back(new TrueFilter);
     }
@@ -125,4 +131,11 @@ GidFilter::GidFilter( std::string const & name)  {
         throw std::invalid_argument("No group named " + name);
     }
     gid = group->gr_gid;
+}
+
+TimeFilter::TimeFilter ( std::string const & date, bool o) : older(o) {
+    timepoint = parse_date(date);
+}
+bool TimeFilter::operator()(File const & f ) {
+    return older ? f.ctime() < timepoint : f.ctime() > timepoint;
 }

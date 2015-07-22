@@ -6,6 +6,9 @@
 #include <boost/utility.hpp>
 #include <string>
 #include <vector>
+#include <ctime>
+
+#include "DateParser.h"
 
 typedef std::vector<std::string> size_list_t;
 
@@ -63,6 +66,14 @@ struct GidFilter : BaseFilter {
 	GidFilter* clone() const { return new GidFilter(*this); }
 
 	gid_t gid;
+};
+struct TimeFilter : BaseFilter {
+	TimeFilter ( std::string const &, bool);
+	virtual bool operator()(File const & f );
+	TimeFilter* clone() const { return new TimeFilter(*this); }
+
+	time_t timepoint;
+	bool older;
 };
 
 typedef boost::ptr_list<BaseFilter> FilterList;
