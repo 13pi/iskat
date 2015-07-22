@@ -9,13 +9,13 @@
 #include <sstream>
 
 File::File(std::string const &s, bool f) : filename(s) {
-    if(f) {
-        if(stat(s.c_str(), &_stat) < 0) {
+    if(!f || eaccess(s.c_str(), F_OK)) {
+        if(lstat(s.c_str(), &_stat) < 0) {
             throw FileException(errno, s);
         }
     }
     else {
-        if(lstat(s.c_str(), &_stat) < 0) {
+        if(stat(s.c_str(), &_stat) < 0) {
             throw FileException(errno, s);
         }
     }

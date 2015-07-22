@@ -41,17 +41,11 @@ bool Walker::get_next(File & f) {
             if (!strcmp(cur, ".") || !strcmp(cur, "..")) continue;
 
             // create file
-            try {
-                f = File(current, follow_syml);
-                if (should_be_visited()) push();
-                else current = parent + cur;
-                return true;
-            }
-            catch (std::exception &e ) {
-                std::cerr << e.what() << std::endl;
-                pop();
-                continue;
-            }
+            f = File(current, follow_syml);
+            if (should_be_visited()) push();
+            else current = parent + cur;
+            return true;
+            
 
 
         } 
@@ -96,7 +90,8 @@ bool Walker::should_be_visited() {
     if (follow_syml) stat(full_path.c_str(), &st);
     else lstat(full_path.c_str(), &st);
     if (S_ISDIR(st.st_mode)) {
-        if (!eaccess(full_path.c_str(), R_OK | X_OK )) return true; 
+        if (!eaccess(full_path.c_str(), R_OK | X_OK )) return true;
+        else if (eaccess(full_path.c_str(), F_OK)) return false;
         else {
             std::cerr << PROGRAM_NAME << ": `" 
             << full_path 
