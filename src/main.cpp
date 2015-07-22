@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
         ("start,S", value<string>()->default_value("."), "Starting path")
         ("max-depth,D", value<int>(), "Descend  at  most levels (a non-neg"
         "ative integer) levels of directories below the commandline arguments.")
-        ("follow-syml,F", "Follow symbolic links.")
+        ("follow-syml,L", "Follow symbolic links.")
     ;
 
     po::options_description filter_options("tests");
