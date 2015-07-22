@@ -8,6 +8,7 @@
 #include <boost/filesystem.hpp>
 
 #include "Filter.h"
+#include "Action.h"
 #include "Walker.h"
 
 #include "iskat.h"
@@ -31,6 +32,7 @@ void walk(std::string const & start_dir, po::variables_map & po, std::vector<str
 
     Walker w(start_dir, max_depth, follow_syml);
     FilterList filters = make_filters(po, size_list);
+    ActionList actions = make_actions(po);
 
     File current(start_dir, false);
 
@@ -46,7 +48,7 @@ void walk(std::string const & start_dir, po::variables_map & po, std::vector<str
         }
 
         if (pass_filters) {
-            std::cout << current.path() << std::endl;
+            apply_actions(current, actions);
         }
     }
 

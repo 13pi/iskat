@@ -1,6 +1,8 @@
 #ifndef _FILTER_H
 #define _FILTER_H
 
+#include "iskat.h"
+
 #include <boost/ptr_container/ptr_list.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <boost/utility.hpp>
@@ -17,10 +19,6 @@ typedef std::vector<std::string> size_list_t;
 struct BaseFilter {
 	virtual bool operator()(File const &) = 0;
 	virtual BaseFilter * clone() const {return (BaseFilter*)NULL;}
-};
-
-struct clone_mixin {
-	virtual clone_mixin* clone() const { return new clone_mixin(*this); }
 };
 
 struct TrueFilter : BaseFilter, clone_mixin {

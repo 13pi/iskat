@@ -6,8 +6,6 @@
 #include <ostream>
 #include <exception>
 
-
-
 typedef unsigned short perm_t;
 
 enum FileType {
