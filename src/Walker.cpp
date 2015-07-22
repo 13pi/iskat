@@ -6,6 +6,7 @@
 #include <cstring>
 
 using std::string;
+using boost::make_tuple;
 
 Walker::Walker(std::string const & start, int md, bool fl) : follow_syml(fl), maxlevel(md), d(NULL) {
     current = start;
@@ -57,14 +58,14 @@ bool Walker::get_next(File & f) {
 
 void Walker::pop() {
     closedir(d);
-    if (--level) {  
-        dent = dent_st.top();
-        d = dir_st.top();
-        parent = parent_st.top();
+    if (--level) { 
+        state_t top = state_st.top();
 
-        dent_st.pop();
-        dir_st.pop();
-        parent_st.pop();
+        parent = top.get<0>();
+        d = top.get<1>();
+        dent = top.get<2>();
+
+        state_st.pop();
     } 
     else d = NULL;
 
@@ -72,9 +73,7 @@ void Walker::pop() {
 
 void Walker::push() {
     level += 1;
-    parent_st.push(parent);
-    dir_st.push(d);
-    dent_st.push(dent);
+    state_st.push(make_tuple(parent, d, dent));
 
     parent += dent->d_name;
     current = parent;

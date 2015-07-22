@@ -16,61 +16,58 @@ typedef std::vector<std::string> size_list_t;
 
 struct BaseFilter {
 	virtual bool operator()(File const &) = 0;
-	virtual BaseFilter * clone() const = 0;
+	virtual BaseFilter * clone() const {return (BaseFilter*)NULL;}
 };
 
-struct TrueFilter : BaseFilter {
+struct clone_mixin {
+	virtual clone_mixin* clone() const { return new clone_mixin(*this); }
+};
+
+struct TrueFilter : BaseFilter, clone_mixin {
 	virtual bool operator()(File const &) { return true; }
-	TrueFilter* clone() const { return new TrueFilter(*this); }
 };
 
-struct TypeFilter : BaseFilter {
+struct TypeFilter : BaseFilter, clone_mixin {
 	TypeFilter( std::string const & );
 	TypeFilter( FileType t ) : type(t) {}
 	virtual bool operator()(File const &f) { return type == f.type(); }
-	TypeFilter* clone() const { return new TypeFilter(*this); }
 
 	FileType type;
 };
 
-struct NameFilter : BaseFilter {
+struct NameFilter : BaseFilter, clone_mixin {
 	NameFilter( std::string const & n ) : pattern(n) {}
 	virtual bool operator()(File const &f);
-	NameFilter* clone() const { return new NameFilter(*this); }
 
 	std::string pattern;
 };
 
-struct SizeFilter : BaseFilter {
+struct SizeFilter : BaseFilter, clone_mixin {
 	SizeFilter ( off_t sz, bool greater_than ) : size(sz), gt(greater_than) {} 
 	virtual bool operator()(File const &f);
-	SizeFilter* clone() const { return new SizeFilter(*this); }
 
 	off_t size;
 	bool gt;
 };
 
-struct UidFilter : BaseFilter {
+struct UidFilter : BaseFilter, clone_mixin {
 	UidFilter ( uid_t u ) : uid(u) {}
 	UidFilter (std::string const &);
 	virtual bool operator()(File const & f) { return uid == f.uid(); }
-	UidFilter* clone() const { return new UidFilter(*this); }
 
 	uid_t uid;
 };
 
-struct GidFilter : BaseFilter {
+struct GidFilter : BaseFilter, clone_mixin {
 	GidFilter ( gid_t u ) : gid(u) {}
 	GidFilter ( std::string const &);
 	virtual bool operator()(File const & f ) { return gid == f.gid(); }
-	GidFilter* clone() const { return new GidFilter(*this); }
 
 	gid_t gid;
 };
-struct TimeFilter : BaseFilter {
+struct TimeFilter : BaseFilter, clone_mixin {
 	TimeFilter ( std::string const &, bool);
 	virtual bool operator()(File const & f );
-	TimeFilter* clone() const { return new TimeFilter(*this); }
 
 	time_t timepoint;
 	bool older;

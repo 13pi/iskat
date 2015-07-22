@@ -1,6 +1,7 @@
 #ifndef _WALKER_H
 #define _WALKER_H
 
+#include "boost/tuple/tuple.hpp"
 #include <stack>
 #include "File.h"
 #include <sys/types.h>
@@ -15,6 +16,12 @@ struct Walker {
 	bool get_next(File&);
 	
 private:
+
+	typedef boost::tuple<
+		std::string,
+		DIR*,
+		struct dirent* > state_t;
+
 	bool follow_syml;
 	int maxlevel;
 
@@ -24,10 +31,8 @@ private:
 	std::string parent;
 	int level;
 	struct stat st;
-
-	std::stack<std::string> parent_st;
-	std::stack<DIR*> dir_st;
-	std::stack<struct dirent*> dent_st;
+	
+	std::stack<state_t> state_st;
 
 	void pop();
 	void push();
