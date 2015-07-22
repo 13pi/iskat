@@ -1,13 +1,17 @@
 #include "Filter.h"
 
 #include <boost/regex.hpp>
-
+#include <sys/types.h>
+#include <pwd.h>
+#include <grp.h>
 #include <fnmatch.h>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <stdexcept>
 #include <sstream>
+#include <cstring>
+#include <cerrno>
 
 using std::string;
 using std::cout;
@@ -28,9 +32,22 @@ FilterList make_filters(boost::program_options::variables_map & po, size_list_t 
     if (po.count("size")) {
         make_size_filters(sl, ret);
     }
+    if (po.count("uid")) {
+        ret.push_back(new UidFilter(po["uid"].as<int>()));
+    }
+    if (po.count("gid")) {
+        ret.push_back(new GidFilter(po["gid"].as<int>()));
+    }
+    if (po.count("group")) {
+        ret.push_back(new GidFilter(po["group"].as<string>()));
+    }
+    if (po.count("owner")) {
+        ret.push_back(new UidFilter(po["owner"].as<string>()));
+    }
     if (ret.size() == 0) {
         ret.push_back(new TrueFilter);
     }
+
     return ret;
 }
 
@@ -94,3 +111,18 @@ bool SizeFilter::operator()(File const &f) {
     return f.size() <= size;
 }
 
+UidFilter::UidFilter( std::string const & name) {
+    struct passwd * user = getpwnam(name.c_str());
+    if (user == NULL) {
+        throw std::invalid_argument("No user named " + name);
+    }
+    uid = user->pw_uid;
+}
+
+GidFilter::GidFilter( std::string const & name)  {
+    struct group * group = getgrnam(name.c_str());
+    if (group == NULL) {
+        throw std::invalid_argument("No group named " + name);
+    }
+    gid = group->gr_gid;
+}

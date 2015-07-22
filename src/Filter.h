@@ -47,6 +47,24 @@ struct SizeFilter : BaseFilter {
 	bool gt;
 };
 
+struct UidFilter : BaseFilter {
+	UidFilter ( uid_t u ) : uid(u) {}
+	UidFilter (std::string const &);
+	virtual bool operator()(File const & f) { return uid == f.uid(); }
+	UidFilter* clone() const { return new UidFilter(*this); }
+
+	uid_t uid;
+};
+
+struct GidFilter : BaseFilter {
+	GidFilter ( gid_t u ) : gid(u) {}
+	GidFilter ( std::string const &);
+	virtual bool operator()(File const & f ) { return gid == f.gid(); }
+	GidFilter* clone() const { return new GidFilter(*this); }
+
+	gid_t gid;
+};
+
 typedef boost::ptr_list<BaseFilter> FilterList;
 typedef FilterList::iterator filter_it;
 
