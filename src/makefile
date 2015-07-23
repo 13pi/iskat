@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-c -std=c++0x -Wall -Werror -Wno-unused-result
+CFLAGS=-c -std=c++0x -Wall -Werror -Wno-unused-result -DBOOST_ALL_DYN_LINK
 LDFLAGS=-lboost_program_options -lboost_filesystem -lboost_system -lboost_regex
 
 EXEC=iskat
