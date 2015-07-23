@@ -6,7 +6,6 @@
 #include <cstring>
 
 using std::string;
-using boost::make_tuple;
 
 Walker::Walker(std::string const & start, int md, bool fl) : follow_syml(fl), maxlevel(md), d(NULL) {
     current = start;
@@ -73,7 +72,7 @@ void Walker::pop() {
 
 void Walker::push() {
     level += 1;
-    state_st.push(make_tuple(parent, d, dent));
+    state_st.push(boost::make_tuple(parent, d, dent));
 
     parent += dent->d_name;
     current = parent;
