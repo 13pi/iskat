@@ -39,6 +39,8 @@ $(DBGDIR)/%.o: %.cpp $(HEADERS)
 $(RELDIR)/%.o: %.cpp $(HEADERS)
 	$(CC) $(CFLAGS) $(RELCFLAGS) -o $@ $<
 
+$(HEADERS):
+
 rebuild: clean default
 
 clean:
