@@ -1,0 +1,117 @@
+.TH iskat 1  "July 21, 2015" "version 0.2.0" "USER COMMANDS"
+
+.SH NAME
+
+iskat \- find files
+
+.SH SYNOPSIS
+
+.B iskat
+ [general options] tests action
+
+.SH DESCRIPTION
+
+
+.PP
+
+The iskat program recursively descends the directory hierarchy for each path seeking files that match a Boolean expression written in the primaries specified below.
+
+iskat is able to descend to arbitrary depths in a file hierarchy and does not fail due to path length limitations (unless a path operand specified by the application exceeds PATH_MAX requirements).
+
+.SH OPTIONS
+
+.B GENERAL OPTIONS:
+.TP
+/-h [ --help ] 
+Print a summary of the command-line usage of iskat
+and exit.
+.TP
+/-v [ --version ] 
+Print the iskat version number and exit.
+.TP
+/-D [ --max-depth ] <arg> 
+Descend at most levels (a non-negative integer)levels of directories below the commandline arguments.
+.TP
+/-F [ --follow-syml ] 
+iskat follows symbolic links.
+.TP
+.B TESTS:
+.TP
+/-t [ --type ] <arg> 
+File is of type <arg>, true if the type of the file is a, where a is b, c, d, f, l, p, or s for block special file, character special file, directory, regular file, symbolic link, fifo (named pipe), or socket, respectively. 
+.TP
+-p [ --permissions ] <arg>
+ File permissions is <arg>
+.TP
+-u [ --uid ] <arg> 
+File's numeric user ID is <arg>
+.TP
+-g [ --gid ] <arg>
+File's numeric group ID is <arg>
+.TP
+-o [ --owner ] <arg> 
+File is owned by <arg>
+.TP
+-G [ --group ] <arg>
+File belongs to group <arg>
+.TP
+-n [ --newer ] <arg> 
+File modified after the time point <arg>
+.TP
+-O [ --older ] <arg> 
+File modified before the time point <arg>
+.TP
+-n [--name] 
+Search by name (wildcards allowed)
+.TP
+-s [--size] 
+Search by file size (can be applied multiple times)
+
+.TP
+.B ACTIONS:
+.TP
+-P [ --print ] 
+Print the full file name
+.TP
+-E [ --exec ]
+Apply command to file
+
+.SH EXAMPLES
+.TP 
+.B Example 1
+Writing out the hierarhy directory from the current directory
+.TP
+$ iskat --type d
+.TP
+.B Example 2
+Writing out the list of files in the current directory and its subdirectories
+.TP
+$ iskat --type f
+.TP
+.B Example 3
+Writing out the list of files, which ranging in size from 500 MB to 2 GB
+.TP
+$ iskat --size 500M --size -2G
+
+.SH DIAGNOSTICS
+If iskat meets the directory, to which the user has no rights, this directory is skipped and user get an error message
+.SH AUTHOR
+.TP 
+Andronov Vadim
+.TP
+Bakaev Nikita
+.TP 
+Gorev Evgeniy
+.TP 
+Khrustaleva Natalia
+.TP
+Konovalov Daniil
+.TP 
+Kuzmin Timofey
+.TP 
+Lukin Ivan
+.TP
+Maslova Daria
+
+.SH SEE ALSO
+.BR find(1)
