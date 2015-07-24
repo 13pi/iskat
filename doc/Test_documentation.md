@@ -77,6 +77,10 @@
 	$ ./iskat -v (iskat version)			информация о версии программы iskat						информация о версии программы iskat						Да 				Нет
 	$ ./iskat --max-depth (max depth) 4	 	/home/al/iskat/iskat/file.o /home/al/iskat/file.cpp 	/home/al/iskat/iskat/file.o /home/al/iskat/file.cpp 	Да				Нет
 	$ ./iskat -D (max depth) 4	 			/home/al/iskat/iskat/file.o /home/al/iskat/file.cpp 	/home/al/iskat/iskat/file.o /home/al/iskat/file.cpp 	Да				Нет
+	$ ./iskat --perm (permissions)	775	    ./iskat ./build ./build/debug                          ./iskat ./build ./build/debug                            Да 				Нет
+    $ ./iskat -p (permissions)	775	        ./iskat ./build ./build/debug                          ./iskat ./build ./build/debug                            Да 				Нет
+    $ ./iskat -p (permissions)	=664	    ./file.h ./my.txt ./tst/filter.c                        ./file.h ./my.txt ./tst/filter.c                        Да              Нет
+    $ ./iskat -p (permissions)	664	        ./file.h ./my.txt ./tst/filter.c                        ./file.h ./my.txt ./tst/filter.c                        Да              Нет
 	$ ./iskat -u (uid) 1001	 				./file.c ./filter.txt ./pipe ./mysock  					./file.c ./filter.txt ./pipe ./mysock					Да				Нет
 	~# ./iskat -u (uid) 0	 				./file.o ./text.txt 			  						./file.o ./text.txt										Да				Нет
 	$ ./iskat --uid (uid) 1001	 			./file.c ./filter.txt ./pipe ./mysock  					./file.c ./filter.txt ./pipe ./mysock					Да				Нет
