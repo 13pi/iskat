@@ -3,8 +3,8 @@ CFLAGS=-c -std=c++0x -Wall -Werror -Wno-unused-result -DBOOST_ALL_DYN_LINK
 LDFLAGS=-lboost_program_options -lboost_filesystem -lboost_system -lboost_regex
 
 EXEC=iskat
-SOURCES=main.cpp File.cpp Filter.cpp Walker.cpp DateParser.cpp Action.cpp
-HEADERS=File.h Filter.h Walker.h iskat.h DateParser.h Action.h
+SOURCES=main.cpp File.cpp Filter.cpp Walker.cpp DateParser.cpp Action.cpp PermParser.cpp
+HEADERS=File.h Filter.h Walker.h iskat.h DateParser.h Action.h PermParser.h
 OBJECTS=$(SOURCES:.cpp=.o)
 
 DBGDIR=build/debug
@@ -22,6 +22,8 @@ TESTLDFLAG=
 TESTEXEC=test/test
 RELMAINOBJ=$(addprefix $(RELDIR)/,main.o)
 TESTRELOBJECTS=$(filter-out $(RELMAINOBJ),$(RELOBJS))
+
+MAN=iskat.1.gz
 
 .PHONY: all clean debug prep release rebuild install tgz uninstall test
 
@@ -41,13 +43,20 @@ $(RELDIR)/%.o: %.cpp $(HEADERS)
 
 $(HEADERS):
 
+iskat.1:
+	
+
 rebuild: clean default
 
 clean:
 	rm -vf $(EXEC) $(RELOBJS) $(DBGOBJS)
 
-install: $(EXEC)
+$(MAN): iskat.1
+	gzip iskat.1.gz
+
+install: $(EXEC) $(MAN)
 	cp $(EXEC) /usr/bin/
+	cp iskat.1.gz /usr/local/share/man/man1/
 
 uninstall:
 	rm -f /usr/bin/$(EXEC)

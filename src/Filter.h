@@ -10,8 +10,6 @@
 #include <vector>
 #include <ctime>
 
-#include "DateParser.h"
-
 typedef std::vector<std::string> size_list_t;
 
 #include "File.h"
@@ -70,6 +68,14 @@ struct TimeFilter : BaseFilter, clone_mixin {
 
 	time_t timepoint;
 	bool older;
+};
+
+struct PermFilter : BaseFilter, clone_mixin {
+	PermFilter ( std::string const & );
+	virtual bool operator()(File const & );
+
+	mode_t mode;
+	char action;
 };
 
 typedef boost::ptr_list<BaseFilter> FilterList;

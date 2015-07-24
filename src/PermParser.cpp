@@ -42,8 +42,8 @@ struct perm_parser {
 
 	bool feed(str_cref text) {
 		mask = 0;
-		re e1("^([-+=\\\\])?([0-7]{1,4})$");
-		re e2("^([-+=\\\\])?(([ugoa]*([-+=]([ugo]|[rwxst]*))+,)*([ugoa]*([-+=]([ugo]|[rwxst]*))+))$");
+		re e1("^([-+=/])?([0-7]{1,4})$");
+		re e2("^([-+=/])?(([ugoa]*([-+=]([ugo]|[rwxst]*))+,)*([ugoa]*([-+=]([ugo]|[rwxst]*))+))$");
 
 		// 644, 777, etc...
 		if (match(text, e1)) {
@@ -103,15 +103,15 @@ struct perm_parser {
 				switch (modifier[0]) {
 					case 'u': 
 						bits = (mask & 0700);
-						bits |= (bits >> 3) | (bits >> 6) | mask & 04000;
+						bits |= (bits >> 3) | (bits >> 6) | (mask & 04000);
 						break;
 					case 'g': 
 						bits = mask & 070;
-						bits |= (bits >> 3) | (bits << 3) | mask & 02000;
+						bits |= (bits >> 3) | (bits << 3) | (mask & 02000);
 						break;
 					case 'o': 
 						bits = mask & 07;
-						bits |= (bits << 6) | (bits << 3) | mask & 01000;
+						bits |= (bits << 6) | (bits << 3) | (mask & 01000);
 						break;
 					case 'a': bits = mask;
 				}
