@@ -4,11 +4,15 @@
 
 #include <iostream>
 #include <cstring>
+#include <boost/filesystem.hpp>
+#include <stdlib.h>
+#include <limits.h>
 
 using std::string;
 
 Walker::Walker(std::string const & start, int md, bool fl) : follow_syml(fl), maxlevel(md), d(NULL) {
     current = start;
+    startedFolder = start;
     level = 1;
     if (follow_syml) stat(current.c_str(), &st);
     else lstat(current.c_str(), &st);
@@ -39,6 +43,15 @@ bool Walker::get_next(File & f) {
         if ((dent = readdir(d))) {
             char const * cur = dent->d_name;
             if (!strcmp(cur, ".") || !strcmp(cur, "..")) continue;
+
+            // if we on root folder  - hide system proc folder
+            if (level == 1){
+                char resolved_path[PATH_MAX]; 
+                realpath(startedFolder.c_str(), resolved_path); 
+                if ( !strcmp( resolved_path, "/") && !strcmp(cur, "proc" )) continue;
+            }
+
+            
 
             // create file
             f = File(current, follow_syml);

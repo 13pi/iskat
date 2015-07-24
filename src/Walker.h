@@ -38,6 +38,8 @@ private:
 	void push();
 	bool should_be_visited();
 
+public:
+	std::string startedFolder;
 };
 
 #endif // _WALKER_H
