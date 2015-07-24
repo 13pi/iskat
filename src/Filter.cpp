@@ -13,6 +13,9 @@
 #include <cstring>
 #include <cerrno>
 
+#include "DateParser.h"
+#include "PermParser.h"
+
 using std::string;
 using std::cout;
 using std::endl;
@@ -50,6 +53,10 @@ FilterList make_filters(boost::program_options::variables_map & po, size_list_t 
     if (po.count("newer")) {
         ret.push_back(new TimeFilter(po["newer"].as<string>(), false));
     }
+    if (po.count("perm")) {
+        ret.push_back(new PermFilter(po["perm"].as<string>()));
+    }
+
     if (ret.size() == 0) {
         ret.push_back(new TrueFilter);
     }
@@ -136,6 +143,27 @@ GidFilter::GidFilter( std::string const & name)  {
 TimeFilter::TimeFilter ( std::string const & date, bool o) : older(o) {
     timepoint = parse_date(date);
 }
+
 bool TimeFilter::operator()(File const & f ) {
     return older ? f.ctime() < timepoint : f.ctime() > timepoint;
+}
+
+PermFilter::PermFilter ( std::string const & e) {
+    parser_result_t parsed = parse_permissions(e);
+
+    if (!parsed.get<0>())
+        throw std::invalid_argument("Invalid mode: " + e);
+
+    mode = parsed.get<1>();
+    action = parsed.get<2>();
+}
+
+bool PermFilter::operator()(File const & f) {
+    switch (action) {
+        case '+': return f.permissions() & mode;
+        case '/': return f.permissions() & mode;
+        case '-': return (f.permissions() & mode) == mode;
+        case '=': return f.permissions() == mode;
+        default: return false;
+    }
 }

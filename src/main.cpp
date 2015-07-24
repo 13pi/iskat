@@ -17,7 +17,7 @@ namespace po = boost::program_options;
 using std::string;
 
 char const * PROGRAM_NAME = "iskat";
-char const * VERSION = "0.5.0";
+char const * VERSION = "0.6.0";
 
 void walk(std::string const & start_dir, po::variables_map & po, std::vector<string> & size_list) {
     int max_depth = -1;
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
     po::options_description filter_options("tests");
     filter_options.add_options()
         ("type,t", value<string>(), "File is of type t")
-        ("permissions,p", value<string>(), "File's permission bits are exactly mode")
+        ("perm,p", value<string>(), "File's permission bits are exactly mode")
         ("uid,u", value<int>(), "File's numeric user ID is n")
         ("gid,g", value<int>(), "File's numeric group ID is n")
         ("owner,U", value<string>(), "File is owned by o")
