@@ -44,15 +44,15 @@ $(RELDIR)/%.o: %.cpp $(HEADERS)
 $(HEADERS):
 
 iskat.1:
-	
+
 
 rebuild: clean default
 
 clean:
-	rm -vf $(EXEC) $(RELOBJS) $(DBGOBJS)
+	rm -vf $(EXEC) $(RELOBJS) $(DBGOBJS) $(MAN)
 
 $(MAN): iskat.1
-	gzip iskat.1.gz
+	gzip < iskat.1 > iskat.1.gz
 
 install: $(EXEC) $(MAN)
 	cp $(EXEC) /usr/bin/
@@ -60,9 +60,10 @@ install: $(EXEC) $(MAN)
 
 uninstall:
 	rm -f /usr/bin/$(EXEC)
+	rm -f /usr/local/share/man/man1/iskat.1.gz
 
 tgz:
-	tar -cvzf ../bin/iskat.tgz $(SOURCES) $(HEADERS) makefile
+	tar -cvzf ../bin/iskat.tgz $(SOURCES) $(HEADERS) makefile iskat.1
 
 prep:
 	@mkdir -p $(DBGDIR) $(RELDIR)
